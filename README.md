@@ -320,3 +320,11 @@ See `.env.example` for required environment variables.
 The project uses TypeScript with strict type checking enabled. All source code is in the `src/` directory and gets compiled to the `dist/` directory.
 
 For development, use `npm run dev` which will automatically restart the server when files change.
+
+Screenshots
+
+![Screenshots](./screenshots/Screenshot%202025-09-23%20at%2018.31.51.png)
+![Screenshots](./screenshots/Screenshot%202025-09-23%20at%2018.32.03.png)
+![Screenshots](./screenshots/Screenshot%202025-09-23%20at%2018.32.11.png)
+![Screenshots](./screenshots/Screenshot%202025-09-23%20at%2018.32.17.png)
+![Screenshots](./screenshots/Screenshot%202025-09-23%20at%2018.32.25.png)
