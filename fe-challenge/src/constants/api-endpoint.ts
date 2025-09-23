@@ -1,0 +1,17 @@
+export const API_ENDPOINTS = {
+  OWNER_LOGIN: '/owner/create-access-code',
+  OWNER_VERIFY: '/owner/validate-access-code',
+  EMPLOYEE_LIST: '/employee/search',
+  CREATE_EMPLOYEE: '/employee/create',
+  UPDATE_EMPLOYEE: '/employee/update',
+  DELETE_EMPLOYEE: '/employee/delete',
+  TASK_LIST: '/task/search',
+  CREATE_TASK: '/task/create',
+  UPDATE_TASK: '/task/update',
+  DELETE_TASK: '/task/delete',
+  VALIDATE_SETUP_TOKEN: '/employee/setup/:token',
+  SETUP_EMPLOYEE_ACCOUNT: '/employee/setup',
+  GET_CHAT_PARTICIPANTS: '/employee/chat/participants',
+  EMPLOYEE_LOGIN: '/employee/login-email',
+  EMPLOYEE_VERIFY: '/employee/validate-access-code',
+}
