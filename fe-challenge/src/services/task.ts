@@ -70,3 +70,11 @@ export const deleteTask = async (taskId: string) => {
     },
   )
 }
+
+export const getEmployeeAssignedTasks = async () => {
+  return api.get<
+    APIResponseUnion<{
+      tasks: Task[]
+    }>
+  >(API_ENDPOINTS.EMPLOYEE_ASSIGNED_TASKS)
+}

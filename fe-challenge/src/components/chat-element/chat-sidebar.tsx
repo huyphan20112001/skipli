@@ -78,7 +78,7 @@ export function ChatSidebar({
         limit: 10,
         search: '',
       }),
-    enabled: !!localStorage.getItem('token') && user?.role === 'employee',
+    enabled: !!localStorage.getItem('token') && user?.role === 'owner',
   })
 
   const employees: Employee[] = isOwner
@@ -141,10 +141,6 @@ export function ChatSidebar({
           ))
         )}
       </div>
-
-      {/* <div className="mt-6">
-        <Button className="w-full">New chat</Button>
-      </div> */}
     </div>
   )
 }

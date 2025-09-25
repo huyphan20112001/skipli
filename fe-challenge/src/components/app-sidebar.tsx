@@ -17,7 +17,6 @@ import { useUserDetails } from '@src/hooks/useUserDetails'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: userDetails } = useUserDetails()
-  console.log('🚀 ~ AppSidebar ~ userDetails => ', userDetails)
 
   const user = userDetails?.data.data?.user
 
@@ -32,7 +31,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: 'Manage Tasks',
       url: PATHNAME.MANAGE_TASKS,
       icon: ListChecks,
-      roles: ['owner'],
+      roles: ['owner', 'employee'],
     },
     {
       title: 'Messages',

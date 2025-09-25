@@ -5,14 +5,20 @@ import {
   validateDeleteTask,
   validateTaskSearch,
   validateUpdateTask,
+  validateEmployeeTaskSearch,
 } from "../middleware/validation";
-import { authenticateToken, requireOwner } from "../middleware/auth";
+import {
+  authenticateToken,
+  requireOwner,
+  requireEmployee,
+} from "../middleware/auth";
 import {
   getTaskDetails,
   createTask,
   deleteTask,
   getTaskList,
   updateTask,
+  getEmployeeTaskList,
 } from "../controllers/task";
 
 const router = Router();
@@ -33,13 +39,7 @@ router.post(
   deleteTask
 );
 
-router.put(
-  "/update",
-  authenticateToken,
-  requireOwner,
-  validateUpdateTask,
-  updateTask
-);
+router.put("/update", authenticateToken, validateUpdateTask, updateTask);
 
 router.get(
   "/search",
@@ -49,13 +49,7 @@ router.get(
   getTaskList
 );
 
-router.put(
-  "/:taskId",
-  authenticateToken,
-  requireOwner,
-  validateTaskId,
-  updateTask
-);
+router.put("/:taskId", authenticateToken, validateTaskId, updateTask);
 
 router.delete(
   "/:taskId",
@@ -66,5 +60,13 @@ router.delete(
 );
 
 router.get("/:taskId", authenticateToken, validateTaskId, getTaskDetails);
+
+router.get(
+  "/employee/assigned",
+  authenticateToken,
+  requireEmployee,
+  validateEmployeeTaskSearch,
+  getEmployeeTaskList
+);
 
 export default router;

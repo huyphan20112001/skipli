@@ -6,6 +6,7 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from '@src/components/ui/alert-dialog'
+import BasePagination from '@src/components/ui/base-pagination'
 import { Button } from '@src/components/ui/button'
 import { Dialog, DialogTrigger } from '@src/components/ui/dialog'
 import { Input } from '@src/components/ui/input'
@@ -26,6 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from '@src/components/ui/table'
+import usePagination from '@src/hooks/use-pagination'
 import { queryClient } from '@src/lib/query-client'
 import { deleteEmployee, getEmployeeList } from '@src/services/employee'
 import { handleError } from '@src/utils/error'
@@ -43,16 +45,17 @@ const columns = [
 const ManageEmployees = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 
+  const { page, setPage, limit } = usePagination({ initLimit: 5 })
   const { data } = useQuery({
     queryKey: ['employees'],
     queryFn: () =>
       getEmployeeList({
-        page: 1,
-        limit: 10,
+        page,
+        limit,
         search: '',
       }),
   })
-  console.log("🚀 ~ ManageEmployees ~ data => ", data)
+
   const { mutateAsync: deleteEmployeeMutation, isPending } = useMutation({
     mutationKey: ['delete-employee'],
     mutationFn: (employeeId: string) => deleteEmployee(employeeId),
@@ -64,6 +67,7 @@ const ManageEmployees = () => {
     },
   })
   const employees = data?.data.data?.employees || []
+  const totalPages = data?.data.data?.pagination.totalPages || 1
 
   const handleDelete = async (employeeId: string) => {
     await deleteEmployeeMutation(employeeId)
@@ -151,22 +155,11 @@ const ManageEmployees = () => {
         </TableBody>
       </Table>
 
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <BasePagination
+        currentPage={page}
+        totalPages={totalPages}
+        setPage={setPage}
+      />
     </div>
   )
 }

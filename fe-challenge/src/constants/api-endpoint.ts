@@ -14,4 +14,6 @@ export const API_ENDPOINTS = {
   GET_CHAT_PARTICIPANTS: '/employee/chat/participants',
   EMPLOYEE_LOGIN: '/employee/login-email',
   EMPLOYEE_VERIFY: '/employee/validate-access-code',
+  EMPLOYEE_ASSIGNED_TASKS: '/task/employee/assigned',
+  EMPLOYEE: '/employee',
 }

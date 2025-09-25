@@ -1,6 +1,10 @@
 import { API_ENDPOINTS } from '@src/constants/api-endpoint'
 import api from '@src/lib/api'
-import type { APIResponseUnion, FilterResponse } from '@src/types/common'
+import type {
+  APIResponseUnion,
+  FilterResponse,
+  PaginatedResponse,
+} from '@src/types/common'
 import type { Employee } from '@src/types/employee'
 
 export const getEmployeeList = async ({
@@ -15,12 +19,7 @@ export const getEmployeeList = async ({
   return api.get<
     APIResponseUnion<{
       employees: Employee[]
-      page: number
-      limit: number
-      total: number
-      totalPages: number
-      hasNext: boolean
-      hasPrev: boolean
+      pagination: PaginatedResponse
       filters: FilterResponse
     }>
   >(API_ENDPOINTS.EMPLOYEE_LIST, {
@@ -119,4 +118,10 @@ export const employeeVerify = async (data: {
       token: string
     }>
   >(API_ENDPOINTS.EMPLOYEE_VERIFY, data)
+}
+
+export const getEmployeeById = async (employeeId: string) => {
+  return api.get<APIResponseUnion<{ employee: Employee }>>(
+    `${API_ENDPOINTS.EMPLOYEE}/${employeeId}`,
+  )
 }

@@ -801,6 +801,83 @@ export function validateAccountSetup(
 
   next();
 }
+export function validateEmployeeTaskSearch(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const { page, limit, search, status, priority } = req.query;
+
+  if (page && (isNaN(Number(page)) || Number(page) < 1)) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Page must be a positive number",
+      },
+    });
+    return;
+  }
+
+  if (
+    limit &&
+    (isNaN(Number(limit)) || Number(limit) < 1 || Number(limit) > 100)
+  ) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Limit must be a number between 1 and 100",
+      },
+    });
+    return;
+  }
+
+  if (search && typeof search === "string" && search.length > 100) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Search term must be less than 100 characters",
+      },
+    });
+    return;
+  }
+
+  if (
+    status &&
+    !["pending", "in_progress", "completed", "cancelled", "all"].includes(
+      status as string
+    )
+  ) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message:
+          "Status must be 'pending', 'in_progress', 'completed', 'cancelled', or 'all'",
+      },
+    });
+    return;
+  }
+
+  if (
+    priority &&
+    !["low", "medium", "high", "all"].includes(priority as string)
+  ) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Priority must be 'low', 'medium', 'high', or 'all'",
+      },
+    });
+    return;
+  }
+
+  next();
+}
+
 export function validateEmployeeLogin(
   req: Request,
   res: Response,

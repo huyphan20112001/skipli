@@ -4,7 +4,7 @@ import { useSocketAuth } from '@src/hooks/useSocket'
 import type { ChatMessage } from '@src/lib/socket-service'
 import { cn } from '@src/lib/utils'
 import type { Employee } from '@src/types/employee'
-import { ArrowRight, ImageIcon, MoreVertical } from 'lucide-react'
+import { ArrowRight, MoreVertical } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
@@ -97,7 +97,6 @@ export function ChatMain({ participantId }: { participantId?: string }) {
       </div>
 
       <div className="flex items-center gap-3 border border-t p-4">
-        <ImageIcon className="text-muted-foreground h-5 w-5 cursor-pointer" />
         <Input
           placeholder="Enter a message"
           className="flex-1 border-none focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -119,10 +118,11 @@ export function ChatMain({ participantId }: { participantId?: string }) {
 }
 
 const MessagesScreen = () => {
-  const { socketService } = useSocketAuth()
   const [activeParticipant, setActiveParticipant] = useState<
     string | undefined
-  >(undefined)
+  >()
+  
+  const { socketService } = useSocketAuth()
 
   const handleOpenChat = useCallback(
     async (employeeId: Employee['id'] | string) => {

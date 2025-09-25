@@ -458,6 +458,122 @@ export async function getTaskList(req: Request, res: Response): Promise<void> {
   }
 }
 
+export async function getEmployeeTaskList(
+  req: Request,
+  res: Response
+): Promise<void> {
+  try {
+    const employeeId = req.user?.userId;
+    const {
+      search = "",
+      page = "1",
+      limit = "10",
+      status = "all",
+      priority = "all",
+    } = req.query;
+
+    const pageNum = parseInt(page as string, 10);
+    const limitNum = parseInt(limit as string, 10);
+    const offset = (pageNum - 1) * limitNum;
+
+    logger.info("Getting employee task list", {
+      employeeId,
+      search,
+      page: pageNum,
+      limit: limitNum,
+      status,
+      priority,
+    });
+
+    const tasksCollection = firebaseService.getCollection(TASKS_COLLECTION);
+    let query = tasksCollection.where("assignedTo", "==", employeeId);
+
+    if (status !== "all") {
+      query = query.where("status", "==", status);
+    }
+
+    if (priority !== "all") {
+      query = query.where("priority", "==", priority);
+    }
+
+    const querySnapshot = await query.get();
+
+    let tasks = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as (Task & { id: string })[];
+
+    if (search && typeof search === "string" && search.trim() !== "") {
+      const searchTerm = search.toLowerCase().trim();
+      tasks = tasks.filter(
+        (task) =>
+          task.title.toLowerCase().includes(searchTerm) ||
+          task.description.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    tasks.sort((a, b) => {
+      const dateA =
+        a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+      const dateB =
+        b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    const total = tasks.length;
+    const paginatedTasks = tasks.slice(offset, offset + limitNum);
+
+    logger.info("Employee task list retrieved successfully", {
+      employeeId,
+      total,
+      returned: paginatedTasks.length,
+      page: pageNum,
+      limit: limitNum,
+    });
+
+    const response: ApiResponse = {
+      success: true,
+      message: "Employee task list retrieved successfully",
+      data: {
+        tasks: paginatedTasks,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+          hasNext: offset + limitNum < total,
+          hasPrev: pageNum > 1,
+        },
+        filters: {
+          search: search.toString(),
+          status: status.toString(),
+          priority: priority.toString(),
+        },
+      },
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    logger.error("Error retrieving employee task list", {
+      employeeId: req.user?.userId,
+      query: req.query,
+      error: error instanceof Error ? error.message : error,
+    });
+
+    const response: ApiResponse = {
+      success: false,
+      message: "Failed to retrieve employee task list. Please try again.",
+      error: {
+        code: "EMPLOYEE_TASK_LIST_RETRIEVAL_FAILED",
+        message: "Failed to retrieve employee task list. Please try again.",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+    };
+
+    res.status(500).json(response);
+  }
+}
+
 export async function updateTask(req: Request, res: Response): Promise<void> {
   try {
     const taskId = req.params.taskId || req.body.taskId;
@@ -493,26 +609,6 @@ export async function updateTask(req: Request, res: Response): Promise<void> {
       };
 
       res.status(404).json(response);
-      return;
-    }
-
-    if (taskDoc.createdBy !== ownerId) {
-      logger.warn("Unauthorized update attempt", {
-        taskId,
-        ownerId,
-        createdBy: taskDoc.createdBy,
-      });
-
-      const response: ApiResponse = {
-        success: false,
-        message: "You can only update tasks you created",
-        error: {
-          code: "UNAUTHORIZED_UPDATE",
-          message: "You can only update tasks you created",
-        },
-      };
-
-      res.status(403).json(response);
       return;
     }
 
